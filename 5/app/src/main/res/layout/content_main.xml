@@ -118,4 +118,19 @@
         app:layout_constraintStart_toEndOf="@+id/editText4"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--    <view xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/note"
+        class="com.example.a5.GraphView"
+        android:layout_width="411dp"
+        android:layout_height="515dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:fadingEdge="vertical"
+        android:gravity="top"
+        android:padding="5dp"
+        android:scrollbars="vertical"
+        android:textSize="22sp"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        tools:layout_editor_absoluteX="0dp" />-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
