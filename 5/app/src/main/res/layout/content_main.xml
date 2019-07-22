@@ -133,11 +133,22 @@
         android:id="@+id/debugText"
         android:layout_width="388dp"
         android:layout_height="58dp"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="336dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <!--    <view xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/note"

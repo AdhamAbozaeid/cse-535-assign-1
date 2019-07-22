@@ -9,6 +9,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isRunning = false;
     private float[] hrValues;
     private int hrCurrIdx = 0;
+    GraphView graph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         hrValues = new float[HR_ARR_LEN];
         hrCurrIdx = 0;
+
+        graph = (GraphView) findViewById(R.id.graph);
+
         debugTextView = (TextView)findViewById(R.id.debugText);
     }
 
@@ -92,6 +100,17 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
+                    new DataPoint(0, 1),
+                    new DataPoint(1, 5),
+                    new DataPoint(2, 3),
+                    new DataPoint(3, 2),
+                    new DataPoint(4, 6)
+            });
+
+            graph.addSeries(series);
+
             String text = new String();
             for(int i = 0; i< hrValues.length; i++)
                 text += String.format("%02d", (int)hrValues[i]) + " ";
