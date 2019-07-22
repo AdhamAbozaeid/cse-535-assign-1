@@ -38,11 +38,17 @@ public class MainActivity extends AppCompatActivity {
         hrValues = new float[HR_ARR_LEN];
         hrCurrIdx = 0;
 
+        // Set maximum x and y axis values
         graph = (GraphView) findViewById(R.id.graph);
         graph.getViewport().setMaxY(MAX_HR + 50);
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMaxX(HR_ARR_LEN);
         graph.getViewport().setXAxisBoundsManual(true);
+
+        // Set Axis Labels
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graph.getGridLabelRenderer().setVerticalAxisTitle("BPM");
+
         debugTextView = (TextView)findViewById(R.id.debugText);
     }
 
