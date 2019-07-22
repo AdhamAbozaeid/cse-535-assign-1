@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
     public static int HR_ARR_LEN = 50;
     public static int MAX_HR = 200;
     public static int SAMPLE_GENERATE_RATE = 350;
-
-    public TextView debugTextView;
 
     private boolean isRunning = false;
     private float[] hrValues;
@@ -67,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
         // Set Axis Labels
         graph.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
         graph.getGridLabelRenderer().setVerticalAxisTitle("BPM");
-
-        debugTextView = (TextView)findViewById(R.id.debugText);
     }
 
     public void startGraph(View view) {
@@ -143,12 +138,6 @@ public class MainActivity extends AppCompatActivity {
             graph.getViewport().setMaxX(offset + HR_ARR_LEN);
             // Add the new series to the graph
             graph.addSeries(series);
-
-
-            String text = new String();
-            for(int i = 0; i< hrValues.length; i++)
-                text += String.format("%02d", (int)hrValues[i]) + " ";
-            debugTextView.setText(text);
         }
     }; //handler
 }
