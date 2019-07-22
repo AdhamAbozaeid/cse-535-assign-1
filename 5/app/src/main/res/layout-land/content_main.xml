@@ -30,25 +30,25 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="75dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#4CAF50"
         android:text="Run"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintStart_toEndOf="@+id/radioGroup"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="76dp"
+        android:layout_height="37dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:backgroundTint="#E91E63"
         android:text="Stop"
-        app:layout_constraintStart_toEndOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/editText4" />
+        app:layout_constraintStart_toEndOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <EditText
         android:id="@+id/editText2"
@@ -91,8 +91,8 @@
 
     <EditText
         android:id="@+id/editText4"
-        android:layout_width="163dp"
-        android:layout_height="39dp"
+        android:layout_width="162dp"
+        android:layout_height="37dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="8dp"
         android:ems="10"
@@ -103,6 +103,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="104dp"
         android:layout_height="89dp"
         android:layout_marginStart="8dp"
@@ -110,9 +111,10 @@
         android:checkedButton="@id/radioButton4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toEndOf="@+id/editText4"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.047">
+        app:layout_constraintVertical_bias="0.029">
 
         <RadioButton
             android:id="@+id/radioButton4"
@@ -129,6 +131,29 @@
             android:text="Female" />
     </RadioGroup>
 
+    <EditText
+        android:id="@+id/debugText"
+        android:layout_width="388dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="336dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 <!--    <view xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/note"
         class="com.example.a5.GraphView"
