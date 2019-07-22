@@ -16,8 +16,9 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-    public static int HR_ARR_LEN = 10;
-    public static int MAX_HR = 100;
+    public static int HR_ARR_LEN = 50;
+    public static int MAX_HR = 200;
+    public static int SAMPLE_GENERATE_RATE = 350;
 
     public TextView debugTextView;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private float[] hrValues;
     private int hrCurrIdx = 0;
     GraphView graph;
+    int offset = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,10 @@ public class MainActivity extends AppCompatActivity {
         hrCurrIdx = 0;
 
         graph = (GraphView) findViewById(R.id.graph);
-
+        graph.getViewport().setMaxY(MAX_HR + 50);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMaxX(HR_ARR_LEN);
+        graph.getViewport().setXAxisBoundsManual(true);
         debugTextView = (TextView)findViewById(R.id.debugText);
     }
 
@@ -64,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     while(isRunning) {
                         float newHR;
-                        Thread.sleep(1000); //one second at a time
+                        Thread.sleep(SAMPLE_GENERATE_RATE); //one second at a time
                         Random rnd = new Random();
 
                         newHR = (float)rnd.nextInt(MAX_HR);
@@ -100,16 +105,18 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
 
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                    new DataPoint(0, 1),
-                    new DataPoint(1, 5),
-                    new DataPoint(2, 3),
-                    new DataPoint(3, 2),
-                    new DataPoint(4, 6)
-            });
+            graph.removeAllSeries();
+            for(int i=0; i<hrCurrIdx; i++)
+                series.appendData(new DataPoint(i+offset, hrValues[i]), true, HR_ARR_LEN);
+            if(hrCurrIdx == HR_ARR_LEN)
+                offset++;
+            graph.getViewport().setMinX(offset);
+            graph.getViewport().setMaxX(offset + HR_ARR_LEN);
 
             graph.addSeries(series);
+
 
             String text = new String();
             for(int i = 0; i< hrValues.length; i++)
