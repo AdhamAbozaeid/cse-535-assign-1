@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText idEditText;
     private EditText nameEditText;
     private EditText ageEditText;
+    private RadioGroup sexRdoGrp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         idEditText = (EditText) findViewById(R.id.idTxtView);
         ageEditText = (EditText) findViewById(R.id.ageTxtView);
         nameEditText = (EditText) findViewById(R.id.nameTxtView);
-
+        sexRdoGrp = (RadioGroup) findViewById(R.id.sexRdoGrp);
 
         /*try {
             SQLiteDatabase db;
@@ -160,7 +163,10 @@ public class MainActivity extends AppCompatActivity {
         String name = nameEditText.getText().toString();
         int age = Integer.parseInt(ageEditText.getText().toString());
         int id = Integer.parseInt(idEditText.getText().toString());
-        currPatient = new Patient(name, id, age, "M", getExternalFilesDir(null).getAbsolutePath());
+        String sex = ((RadioButton)findViewById(sexRdoGrp.getCheckedRadioButtonId()))
+                        .getText().toString();
+
+        currPatient = new Patient(name, id, age, sex, getExternalFilesDir(null).getAbsolutePath());
         isRunning = true;
 
     }

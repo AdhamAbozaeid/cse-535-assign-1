@@ -35,7 +35,7 @@
         android:layout_marginStart="20dp"
         android:backgroundTint="#4CAF50"
         android:text="Run"
-        app:layout_constraintStart_toEndOf="@+id/radioGroup"
+        app:layout_constraintStart_toEndOf="@+id/sexRdoGrp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -46,7 +46,7 @@
         android:layout_marginTop="12dp"
         android:backgroundTint="#E91E63"
         android:text="Stop"
-        app:layout_constraintStart_toEndOf="@+id/radioGroup"
+        app:layout_constraintStart_toEndOf="@+id/sexRdoGrp"
         app:layout_constraintTop_toBottomOf="@+id/startButtonID" />
 
     <EditText
@@ -102,7 +102,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/sexRdoGrp"
         android:layout_width="83dp"
         android:layout_height="58dp"
         android:layout_marginStart="8dp"
