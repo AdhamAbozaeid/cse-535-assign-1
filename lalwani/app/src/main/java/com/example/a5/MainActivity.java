@@ -1,10 +1,16 @@
 package com.example.a5;
 
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +19,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.File;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private int hrCurrIdx = 0;
     GraphView graph;
     int offset = 0;
+    private Patient currPatient;
+    private EditText idEditText;
+    private EditText nameEditText;
+    private EditText ageEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +46,44 @@ public class MainActivity extends AppCompatActivity {
 
         hrValues = new float[HR_ARR_LEN];
         hrCurrIdx = 0;
+
+        idEditText = (EditText) findViewById(R.id.idTxtView);
+        ageEditText = (EditText) findViewById(R.id.ageTxtView);
+        nameEditText = (EditText) findViewById(R.id.nameTxtView);
+
+
+        /*try {
+            SQLiteDatabase db;
+            //db = SQLiteDatabase.openOrCreateDatabase(getDatabasePath("lalwanidb.sqlite"), null);
+            //File dbfile = new File(Environment.getExternalStorageDirectory().getPath()+"/databaseFolder/mydb.sqlite" );
+            //db = SQLiteDatabase.openOrCreateDatabase(Environment.getExternalStorageDirectory().getPath()+"/mydb.sqlite", null);
+            //File externalFilesDir = getExternalFilesDir(null);
+            //if(externalFilesDir == null) {
+             //   return;
+            //}
+
+            //File dbFile = new File(externalFilesDir, "mydb.sqlite");
+
+            db = SQLiteDatabase.openOrCreateDatabase(getExternalFilesDir(null).getAbsolutePath() + "/mydb.sqlite", null);
+            db.beginTransaction();
+            try {
+                //perform your database operations here ...
+                db.execSQL("create table "+ "table"+" ("
+                        + " timestamp int, "
+                        + " x int, "
+                        + " y int, "
+                        + " z int); ");
+
+                db.setTransactionSuccessful(); //commit your changes
+            } catch (SQLiteException e) {
+                //report problem
+            } finally {
+                db.endTransaction();
+            }
+        } catch (SQLException e) {
+            Log.e("DB", e.getMessage());
+            //Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }*/
 
         // Add Start button onClick listener
         final Button startButton = (Button) findViewById(R.id.startButtonID);
@@ -67,10 +116,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startGraph(View view) {
+        String name = nameEditText.getText().toString();
+        int age = Integer.parseInt(ageEditText.getText().toString());
+        int id = Integer.parseInt(idEditText.getText().toString());
+        currPatient = new Patient(name, id, age, "M", getExternalFilesDir(null).getAbsolutePath());
         isRunning = true;
+
     }
 
     public void stopGraph(View view) {
+        int timestamps[] = new int[hrCurrIdx];
+        for(int i=0; i< hrCurrIdx; i++)
+            timestamps[i] = i;
+        currPatient.addSamples(timestamps, hrValues, hrValues, hrValues);
+
         isRunning = false;
         hrCurrIdx = 0;
         offset = 0;

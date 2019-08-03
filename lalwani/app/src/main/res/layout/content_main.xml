@@ -37,7 +37,7 @@
         android:backgroundTint="#4CAF50"
         android:text="Run"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3"/>
+        app:layout_constraintTop_toBottomOf="@+id/idTxtView"/>
 
     <Button
         android:id="@+id/stopButtonID"
@@ -48,10 +48,10 @@
         android:backgroundTint="#E91E63"
         android:text="Stop"
         app:layout_constraintStart_toEndOf="@+id/startButtonID"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/idTxtView" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/ageTxtView"
         android:layout_width="45dp"
         android:layout_height="39dp"
         android:layout_marginStart="8dp"
@@ -59,22 +59,20 @@
         android:layout_marginEnd="26dp"
         android:ems="10"
         android:hint="@string/edit_patient_age"
-        android:text="18"
         android:inputType="number"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/editText4"
+        app:layout_constraintEnd_toStartOf="@+id/nameTxtView"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/editText3"
+        app:layout_constraintStart_toEndOf="@+id/idTxtView"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/idTxtView"
         android:layout_width="70dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:text="123218"
         android:hint="@string/edit_patient_ID"
         android:inputType="number"
         android:textSize="14sp"
@@ -92,13 +90,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/nameTxtView"
         android:layout_width="111dp"
         android:layout_height="35dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
         android:ems="10"
-        android:text="Patient1"
         android:hint="@string/edit_patient_name"
         android:inputType="textPersonName"
         android:textSize="14sp"
@@ -115,7 +112,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.56"
-        app:layout_constraintStart_toEndOf="@+id/editText4"
+        app:layout_constraintStart_toEndOf="@+id/nameTxtView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.027">
 

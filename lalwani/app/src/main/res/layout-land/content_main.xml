@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@+id/startButtonID" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/ageTxtView"
         android:layout_width="46dp"
         android:layout_height="37dp"
         android:layout_marginStart="16dp"
@@ -59,13 +59,13 @@
         android:hint="@string/edit_patient_age"
         android:inputType="number"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/editText4"
+        app:layout_constraintEnd_toStartOf="@+id/nameTxtView"
         app:layout_constraintHorizontal_bias="0.452"
-        app:layout_constraintStart_toEndOf="@+id/editText3"
+        app:layout_constraintStart_toEndOf="@+id/idTxtView"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/idTxtView"
         android:layout_width="69dp"
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
@@ -88,7 +88,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/nameTxtView"
         android:layout_width="86dp"
         android:layout_height="35dp"
         android:layout_marginStart="24dp"
@@ -110,7 +110,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.067"
-        app:layout_constraintStart_toEndOf="@+id/editText4"
+        app:layout_constraintStart_toEndOf="@+id/nameTxtView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.029">
 
