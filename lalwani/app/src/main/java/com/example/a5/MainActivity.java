@@ -1,8 +1,10 @@
 package com.example.a5;
 
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     public static int HR_ARR_LEN = 50;
     public static int MAX_HR = 200;
     public static int SAMPLE_GENERATE_RATE = 350;
+    final String dbFilePath = "/sdcard/Android/data/com.example.a5/files/";
+    final String dbFileName = "lalwani.sqlite";
+    final String serverURL = "http://192.168.0.37/UploadToServer.php";
 
     private boolean isRunning = false;
     private float[] hrValues;
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         dbUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //stopGraph(v);
+                uploadDB(v);
             }
         });
 
@@ -154,6 +159,23 @@ public class MainActivity extends AppCompatActivity {
         graph.removeAllSeries();
         graphY.removeAllSeries();
         graphZ.removeAllSeries();
+    }
+
+    private void uploadDB(View view){
+        /* dialog = ProgressDialog.show(MainActivity.this, "", "Uploading file...", true);*/
+
+        new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        //  messageText.setText("uploading started.....");
+                    }
+                });
+
+                ServerConnection.Upload(dbFileName, dbFilePath, serverURL);
+
+            }
+        }).start();
     }
 
     public void loadPatient(View view) {
