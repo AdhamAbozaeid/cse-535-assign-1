@@ -24,25 +24,13 @@ public class Patient {
         mSex = sex;
         mID = ID;
 
+        if(name == null || sex == null || name.isEmpty() || sex.isEmpty())
+            return;
+
         mTableName = mName+"_"+mID+"_"+mAge+"_"+mSex;
 
         try {
             mDB = SQLiteDatabase.openOrCreateDatabase(dbPath + "/lalwani.sqlite", null);
-            mDB.beginTransaction();
-            try {
-                //perform your database operations here ...
-                mDB.execSQL("create table "+ mTableName +" ("
-                        + " timestamp int, "
-                        + " x real, "
-                        + " y real, "
-                        + " z real); ");
-
-                mDB.setTransactionSuccessful(); //commit your changes
-            } catch (SQLiteException e) {
-                //report problem
-            } finally {
-                mDB.endTransaction();
-            }
         } catch (SQLException e) {
             Log.e("DB", e.getMessage());
         }
@@ -55,13 +43,18 @@ public class Patient {
     public void addSamples(int timestamps[], float x[], float y[], float z[]) {
         mDB.beginTransaction();
         try {
+            mDB.execSQL("create table "+ mTableName +" ("
+                    + " timestamp int, "
+                    + " x real, "
+                    + " y real, "
+                    + " z real); ");
             for(int i=0; i< timestamps.length; i++)
             //perform your database operations here ...
             mDB.execSQL("insert into "+ mTableName+" (timestamp, x, y, z) Values ("
                     + timestamps[i] + ", "
-                    + x[i] + ", "
-                    + y[i] + ", "
-                    + z[i] + ")");
+                        + x[i] + ", "
+                        + y[i] + ", "
+                        + z[i] + ")");
 
             mDB.setTransactionSuccessful(); //commit your changes
         } catch (SQLiteException e) {
