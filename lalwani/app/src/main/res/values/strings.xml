@@ -4,4 +4,6 @@
     <string name="edit_patient_name">Enter name of the patient...</string>
     <string name="edit_patient_ID">Enter ID</string>
     <string name="edit_patient_age">Enter Age</string>
+    <string name="button_upload_to_db">Upload to DB</string>
+    <string name="button_downlaod_from_db">Downlaod from DB</string>
 </resources>
