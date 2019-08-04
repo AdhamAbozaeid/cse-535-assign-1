@@ -40,7 +40,8 @@ public class Patient {
         mDB.close();
     }
 
-    public void addSamples(int timestamps[], float x[], float y[], float z[]) {
+    public boolean addSamples(int timestamps[], float x[], float y[], float z[]) {
+        boolean ret = false;
         mDB.beginTransaction();
         try {
             mDB.execSQL("create table "+ mTableName +" ("
@@ -57,12 +58,15 @@ public class Patient {
                         + z[i] + ")");
 
             mDB.setTransactionSuccessful(); //commit your changes
+            ret = true;
         } catch (SQLiteException e) {
             //report problem
             Log.e("DB", e.getMessage());
+            ret = false;
         } finally {
             mDB.endTransaction();
         }
+        return ret;
     }
 
     public PatientData[] loadPatientData(){
