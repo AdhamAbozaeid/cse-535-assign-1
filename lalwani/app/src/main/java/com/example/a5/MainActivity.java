@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private float[] hrValues;
     private int hrCurrIdx = 0;
     GraphView graph;
+    GraphView graphY;
+    GraphView graphZ;
     int offset = 0;
     private Patient currPatient;
     private EditText idEditText;
@@ -102,17 +104,56 @@ public class MainActivity extends AppCompatActivity {
                 stopGraph(v);
             }
         });
+        //upload db button listener
+        final Button dbUploadButton = (Button) findViewById(R.id.button_upload_to_db);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //stopGraph(v);
+            }
+        });
 
-        // Set maximum x and y axis values
+        //download db button listener
+        final Button dbDownloadButton = (Button) findViewById(R.id.button_download_from_db);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //stopGraph(v);
+            }
+        });
+
+        // Set maximum x and y axis values for Graph 1
         graph = (GraphView) findViewById(R.id.graph);
         graph.getViewport().setMaxY(MAX_HR + 50);
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMaxX(HR_ARR_LEN);
         graph.getViewport().setXAxisBoundsManual(true);
 
+        // Set maximum x and y axis values for Graph 2
+        graphY = (GraphView) findViewById(R.id.graphY);
+        graphY.getViewport().setMaxY(MAX_HR + 50);
+        graphY.getViewport().setYAxisBoundsManual(true);
+        graphY.getViewport().setMaxX(HR_ARR_LEN);
+        graphY.getViewport().setXAxisBoundsManual(true);
+
+        // Set maximum x and y axis values for Graph 3
+        graphZ = (GraphView) findViewById(R.id.graphZ);
+        graphZ.getViewport().setMaxY(MAX_HR + 50);
+        graphZ.getViewport().setYAxisBoundsManual(true);
+        graphZ.getViewport().setMaxX(HR_ARR_LEN);
+        graphZ.getViewport().setXAxisBoundsManual(true);
+
         // Set Axis Labels
         graph.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
         graph.getGridLabelRenderer().setVerticalAxisTitle("BPM");
+
+        //Axis Lavbels for Graph 2 (Timestamp vs Y-axis)
+        graphY.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graphY.getGridLabelRenderer().setVerticalAxisTitle("BPM");
+
+        //Axis Lavbels for Graph 3 (Timestamp vs Z-axis)
+        graphZ.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graphZ.getGridLabelRenderer().setVerticalAxisTitle("BPM");
     }
 
     public void startGraph(View view) {
@@ -134,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
         hrCurrIdx = 0;
         offset = 0;
         graph.removeAllSeries();
+        graphY.removeAllSeries();
+        graphZ.removeAllSeries();
     }
 
     @Override
