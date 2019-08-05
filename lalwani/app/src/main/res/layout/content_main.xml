@@ -42,10 +42,10 @@
 
     <Button
         android:id="@+id/stopButtonID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="91dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#E91E63"
         android:text="Stop"
         app:layout_constraintStart_toEndOf="@+id/startButtonID"
@@ -133,26 +133,29 @@
 
     <Button
         android:id="@+id/button_upload_to_db"
-        android:layout_width="89dp"
-        android:layout_height="45dp"
+        android:layout_width="92dp"
+        android:layout_height="44dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="Upload"
         app:layout_constraintStart_toEndOf="@+id/stopButtonID"
         app:layout_constraintTop_toBottomOf="@+id/nameTxtView" />
 
     <Button
         android:id="@+id/button_download_from_db"
-        android:layout_width="96dp"
-        android:layout_height="43dp"
+        android:layout_width="104dp"
+        android:layout_height="38dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="512dp"
         android:text="Download"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/button_upload_to_db"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/sexRdoGrp"
+        app:layout_constraintVertical_bias="0.0" />
 
     <!--com.jjoe64.graphview.GraphView
         android:id="@+id/graph"

@@ -116,15 +116,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Axis Labels
         graph.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
-        graph.getGridLabelRenderer().setVerticalAxisTitle("BPM");
+        graph.getGridLabelRenderer().setVerticalAxisTitle("X-values");
 
         //Axis Lavbels for Graph 2 (Timestamp vs Y-axis)
         graphY.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
-        graphY.getGridLabelRenderer().setVerticalAxisTitle("BPM");
+        graphY.getGridLabelRenderer().setVerticalAxisTitle("Y-values");
 
         //Axis Lavbels for Graph 3 (Timestamp vs Z-axis)
         graphZ.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
-        graphZ.getGridLabelRenderer().setVerticalAxisTitle("BPM");
+        graphZ.getGridLabelRenderer().setVerticalAxisTitle("Z-values");
     }
 
     public void startGraph(View view) {
