@@ -1,12 +1,18 @@
 package com.example.a5;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -17,6 +23,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -27,6 +34,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    private static final int EXTERNAL_STORAGE_CODE = 100;
     public static int HR_ARR_LEN = 500;
     public static int MAX_HR = 50;
     public static int SAMPLE_GENERATE_RATE = 350;
@@ -102,8 +110,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 loadPatient(v);
+//                doDownload();
+
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                    if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                        //permission is denied, request it.
+                        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permissions, EXTERNAL_STORAGE_CODE);
+                    }
+                    else {
+                        //permission granted
+                        doDownload();
+                    }
+                }
+                else{
+                    doDownload();
+                }
             }
         });
+
 
         // Set maximum x and y axis values for Graph 1
 
@@ -147,12 +172,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         senseAccel = accelManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
+    private void doDownload() {
+        String url = "https://images.all-free-download.com/images/graphiclarge/hd_picture_of_the_beautiful_natural_scenery_03_166249.jpg";
+
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE |
+                DownloadManager.Request.NETWORK_WIFI);
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "image.png");
+
+        DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+
+
+    }
+
     public void startGraph(View view) {
         if(nameEditText.getText().length() == 0 ||
                 ageEditText.getText().length() == 0 ||
                 idEditText.getText().length() == 0
         ) {
-            Toast.makeText(MainActivity.this, "Please fill patient data", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Please fill patient data",
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -276,8 +318,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // Build new series for the updated hrValues
             for(int i=0; i<index; i++)
                 seriesX.appendData(new DataPoint(i+offset, accelValuesX[i]), true, HR_ARR_LEN);
-                seriesY.appendData(new DataPoint(i+offset, accelValuesY[i]), true, HR_ARR_LEN);
-                seriesZ.appendData(new DataPoint(i+offset, accelValuesZ[i]), true, HR_ARR_LEN);
+//                seriesY.appendData(new DataPoint(+offset, accelValuesY[i]), true, HR_ARR_LEN);
+//                seriesZ.appendData(new DataPoint(i+offset, accelValuesZ[i]), true, HR_ARR_LEN);
             // If the array is full, shift the x-axis start offset
             if(index >= HR_ARR_LEN)
                 offset++;
@@ -331,4 +373,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case EXTERNAL_STORAGE_CODE:{
+                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    doDownload();
+                }
+                else{
+                    Toast.makeText(this,"Permission Denied..!!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
 }
+
