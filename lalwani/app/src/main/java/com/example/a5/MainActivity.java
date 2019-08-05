@@ -1,6 +1,11 @@
 package com.example.a5;
 
-
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,9 +26,9 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
-    public static int HR_ARR_LEN = 50;
-    public static int MAX_HR = 200;
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    public static int HR_ARR_LEN = 500;
+    public static int MAX_HR = 50;
     public static int SAMPLE_GENERATE_RATE = 350;
     final String dbFilePath = "/sdcard/Android/data/com.example.a5/files/";
     final String dbFileName = "lalwani.sqlite";
@@ -41,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText nameEditText;
     private EditText ageEditText;
     private RadioGroup sexRdoGrp;
+    
+    private SensorManager accelManage;
+    private Sensor senseAccel;
+    float accelValuesX[] = new float[HR_ARR_LEN];
+    float accelValuesY[] = new float[HR_ARR_LEN];
+    float accelValuesZ[] = new float[HR_ARR_LEN];
+    int index = 0;
+    int k=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,21 +108,24 @@ public class MainActivity extends AppCompatActivity {
         // Set maximum x and y axis values for Graph 1
 
         graph = (GraphView) findViewById(R.id.graph);
-        graph.getViewport().setMaxY(MAX_HR + 50);
+        graph.getViewport().setMaxY(MAX_HR);
+        graph.getViewport().setMinY(-1*(MAX_HR));
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMaxX(HR_ARR_LEN);
         graph.getViewport().setXAxisBoundsManual(true);
 
         // Set maximum x and y axis values for Graph 2
         graphY = (GraphView) findViewById(R.id.graphY);
-        graphY.getViewport().setMaxY(MAX_HR + 50);
+        graphY.getViewport().setMaxY(MAX_HR);
+        graph.getViewport().setMinY(-1*(MAX_HR));
         graphY.getViewport().setYAxisBoundsManual(true);
         graphY.getViewport().setMaxX(HR_ARR_LEN);
         graphY.getViewport().setXAxisBoundsManual(true);
 
         // Set maximum x and y axis values for Graph 3
         graphZ = (GraphView) findViewById(R.id.graphZ);
-        graphZ.getViewport().setMaxY(MAX_HR + 50);
+        graphZ.getViewport().setMaxY(MAX_HR);
+        graph.getViewport().setMinY(-1*(MAX_HR));
         graphZ.getViewport().setYAxisBoundsManual(true);
         graphZ.getViewport().setMaxX(HR_ARR_LEN);
         graphZ.getViewport().setXAxisBoundsManual(true);
@@ -125,6 +141,10 @@ public class MainActivity extends AppCompatActivity {
         //Axis Lavbels for Graph 3 (Timestamp vs Z-axis)
         graphZ.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
         graphZ.getGridLabelRenderer().setVerticalAxisTitle("Z-values");
+        
+        accelManage = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        senseAccel = accelManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
     public void startGraph(View view) {
@@ -143,7 +163,9 @@ public class MainActivity extends AppCompatActivity {
                         .getText().toString();
 
         currPatient = new Patient(name, id, age, sex, getExternalFilesDir(null).getAbsolutePath());
-        isRunning = true;
+        //isRunning = true;
+        
+        accelManage.registerListener(MainActivity.this, senseAccel, accelManage.SENSOR_DELAY_NORMAL);
 
     }
 
@@ -242,21 +264,71 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
+            LineGraphSeries<DataPoint> seriesX = new LineGraphSeries<>();
+            LineGraphSeries<DataPoint> seriesY = new LineGraphSeries<>();
+            LineGraphSeries<DataPoint> seriesZ = new LineGraphSeries<>();
 
             // Clear the graph
             graph.removeAllSeries();
+            graphY.removeAllSeries();
+            graphZ.removeAllSeries();
+            
             // Build new series for the updated hrValues
-            for(int i=0; i<hrCurrIdx; i++)
-                series.appendData(new DataPoint(i+offset, hrValues[i]), true, HR_ARR_LEN);
+            for(int i=0; i<index; i++)
+                seriesX.appendData(new DataPoint(i+offset, accelValuesX[i]), true, HR_ARR_LEN);
+                seriesY.appendData(new DataPoint(i+offset, accelValuesY[i]), true, HR_ARR_LEN);
+                seriesZ.appendData(new DataPoint(i+offset, accelValuesZ[i]), true, HR_ARR_LEN);
             // If the array is full, shift the x-axis start offset
-            if(hrCurrIdx == HR_ARR_LEN)
+            if(index >= HR_ARR_LEN)
                 offset++;
             // Update the X axis range
             graph.getViewport().setMinX(offset);
             graph.getViewport().setMaxX(offset + HR_ARR_LEN);
             // Add the new series to the graph
-            graph.addSeries(series);
+            graph.addSeries(seriesX);
+            
+            graphY.getViewport().setMinX(offset);
+            graphY.getViewport().setMaxX(offset + HR_ARR_LEN);
+            // Add the new series to the graph
+            graphY.addSeries(seriesY);
+            
+            graphZ.getViewport().setMinX(offset);
+            graphZ.getViewport().setMaxX(offset + HR_ARR_LEN);
+            // Add the new series to the graph
+            graphZ.addSeries(seriesZ);
         }
     }; //handler
+    
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        // TODO Auto-generated method stub
+        Sensor mySensor = sensorEvent.sensor;
+
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            if(index < HR_ARR_LEN) {
+                index++;
+                accelValuesX[index] = sensorEvent.values[0];
+                accelValuesY[index] = sensorEvent.values[1];
+                accelValuesZ[index] = sensorEvent.values[2];
+            }
+            else{
+                for (int i = 0; i < HR_ARR_LEN - 1; i++){
+                    accelValuesX[i] = accelValuesX[i+1];
+                    accelValuesY[i] = accelValuesY[i+1];
+                    accelValuesZ[i] = accelValuesZ[i+1];
+                }
+                accelValuesX[index-1] = sensorEvent.values[0];
+                accelValuesY[index-1] = sensorEvent.values[1];
+                accelValuesZ[index-1] = sensorEvent.values[2];
+            }
+        }
+
+        Message msg = handler.obtainMessage(1, null);
+        handler.sendMessage(msg);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
+
+    }
 }
