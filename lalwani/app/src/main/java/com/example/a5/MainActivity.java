@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static int HR_ARR_LEN = 10;
     public static int MAX_HR = 50;
     public static int SAMPLE_GENERATE_RATE = 1000000;
-    final String dbFilePath = "/sdcard/Android/data/com.example.a5/files/";
+    String dbFilePath ;
     final String dbFileName = "lalwani.sqlite";
     final String serverIP = "10.157.97.85";
     final String serverURL = "http://"+serverIP + "/UploadToServer.php";
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        dbFilePath = getExternalFilesDir(null).getAbsolutePath();
         hrValues = new float[HR_ARR_LEN];
         hrCurrIdx = 0;
 
@@ -347,12 +348,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         long currTimestamp = sensorEvent.timestamp;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            if(index < HR_ARR_LEN-1) {
-                index++;
+            if(index < HR_ARR_LEN) {
                 accelValuesX[index] = sensorEvent.values[0];
                 accelValuesY[index] = sensorEvent.values[1];
                 accelValuesZ[index] = sensorEvent.values[2];
                 timestamps[index] = currTimestamp;
+                index++;
             }
             else{
                 for (int i = 0; i < HR_ARR_LEN - 1; i++){
