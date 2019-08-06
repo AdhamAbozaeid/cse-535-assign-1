@@ -44,6 +44,7 @@ public class Patient {
         boolean ret = false;
         mDB.beginTransaction();
         try {
+            mDB.execSQL("DROP TABLE IF EXISTS "+ mTableName);
             mDB.execSQL("create table "+ mTableName +" ("
                     + " timestamp real, "
                     + " x real, "
@@ -51,11 +52,11 @@ public class Patient {
                     + " z real); ");
             for(int i=0; i< timestamps.length; i++)
             //perform your database operations here ...
-            mDB.execSQL("insert into "+ mTableName+" (timestamp, x, y, z) Values ("
-                    + timestamps[i] + ", "
-                        + x[i] + ", "
-                        + y[i] + ", "
-                        + z[i] + ")");
+                mDB.execSQL("insert into "+ mTableName+" (timestamp, x, y, z) Values ("
+                        + timestamps[i] + ", "
+                            + x[i] + ", "
+                            + y[i] + ", "
+                            + z[i] + ")");
 
             mDB.setTransactionSuccessful(); //commit your changes
             ret = true;
