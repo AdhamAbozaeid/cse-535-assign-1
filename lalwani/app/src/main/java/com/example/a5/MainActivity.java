@@ -3,7 +3,6 @@ package com.example.a5;
 import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private boolean isRunning = false;
     private float[] hrValues;
     private int hrCurrIdx = 0;
-    GraphView graph;
+    GraphView graphX;
     GraphView graphY;
     GraphView graphZ;
     int offset = 0;
@@ -132,17 +130,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // Set maximum x and y axis values for Graph 1
 
-        graph = (GraphView) findViewById(R.id.graph);
-        graph.getViewport().setMaxY(MAX_HR);
-        graph.getViewport().setMinY(-1*(MAX_HR));
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMaxX(HR_ARR_LEN);
-        graph.getViewport().setXAxisBoundsManual(true);
+        graphX = (GraphView) findViewById(R.id.graphX);
+        graphX.getViewport().setMaxY(MAX_HR);
+        graphX.getViewport().setMinY(-1*(MAX_HR));
+        graphX.getViewport().setYAxisBoundsManual(true);
+        graphX.getViewport().setMaxX(HR_ARR_LEN);
+        graphX.getViewport().setXAxisBoundsManual(true);
 
         // Set maximum x and y axis values for Graph 2
         graphY = (GraphView) findViewById(R.id.graphY);
         graphY.getViewport().setMaxY(MAX_HR);
-        graph.getViewport().setMinY(-1*(MAX_HR));
+        graphY.getViewport().setMinY(-1*(MAX_HR));
         graphY.getViewport().setYAxisBoundsManual(true);
         graphY.getViewport().setMaxX(HR_ARR_LEN);
         graphY.getViewport().setXAxisBoundsManual(true);
@@ -150,14 +148,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Set maximum x and y axis values for Graph 3
         graphZ = (GraphView) findViewById(R.id.graphZ);
         graphZ.getViewport().setMaxY(MAX_HR);
-        graph.getViewport().setMinY(-1*(MAX_HR));
+        graphZ.getViewport().setMinY(-1*(MAX_HR));
         graphZ.getViewport().setYAxisBoundsManual(true);
         graphZ.getViewport().setMaxX(HR_ARR_LEN);
         graphZ.getViewport().setXAxisBoundsManual(true);
 
         // Set Axis Labels
-        graph.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
-        graph.getGridLabelRenderer().setVerticalAxisTitle("X-values");
+        graphX.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graphX.getGridLabelRenderer().setVerticalAxisTitle("X-values");
 
         //Axis Lavbels for Graph 2 (Timestamp vs Y-axis)
         graphY.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
@@ -220,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         isRunning = false;
         hrCurrIdx = 0;
         offset = 0;
-        graph.removeAllSeries();
+        graphX.removeAllSeries();
         graphY.removeAllSeries();
         graphZ.removeAllSeries();
     }
@@ -311,23 +309,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             LineGraphSeries<DataPoint> seriesZ = new LineGraphSeries<>();
 
             // Clear the graph
-            graph.removeAllSeries();
+            graphX.removeAllSeries();
             graphY.removeAllSeries();
             graphZ.removeAllSeries();
             
             // Build new series for the updated hrValues
-            for(int i=0; i<index; i++)
-                seriesX.appendData(new DataPoint(i+offset, accelValuesX[i]), true, HR_ARR_LEN);
-//                seriesY.appendData(new DataPoint(+offset, accelValuesY[i]), true, HR_ARR_LEN);
-//                seriesZ.appendData(new DataPoint(i+offset, accelValuesZ[i]), true, HR_ARR_LEN);
+            for(int i=0; i<index; i++) {
+                seriesX.appendData(new DataPoint(i + offset, accelValuesX[i]), true, HR_ARR_LEN);
+                seriesY.appendData(new DataPoint(i + offset, accelValuesY[i]), true, HR_ARR_LEN);
+                seriesZ.appendData(new DataPoint(i + offset, accelValuesZ[i]), true, HR_ARR_LEN);
+            }
             // If the array is full, shift the x-axis start offset
             if(index >= HR_ARR_LEN)
                 offset++;
             // Update the X axis range
-            graph.getViewport().setMinX(offset);
-            graph.getViewport().setMaxX(offset + HR_ARR_LEN);
+            graphX.getViewport().setMinX(offset);
+            graphX.getViewport().setMaxX(offset + HR_ARR_LEN);
             // Add the new series to the graph
-            graph.addSeries(seriesX);
+            graphX.addSeries(seriesX);
             
             graphY.getViewport().setMinX(offset);
             graphY.getViewport().setMaxX(offset + HR_ARR_LEN);
@@ -346,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Sensor mySensor = sensorEvent.sensor;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            if(index < HR_ARR_LEN) {
+            if(index < HR_ARR_LEN-1) {
                 index++;
                 accelValuesX[index] = sensorEvent.values[0];
                 accelValuesY[index] = sensorEvent.values[1];

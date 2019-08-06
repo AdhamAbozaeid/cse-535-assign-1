@@ -200,7 +200,7 @@
             android:orientation="vertical">
 
             <com.jjoe64.graphview.GraphView
-                android:id="@+id/graph"
+                android:id="@+id/graphX"
                 android:layout_width="370dp"
                 android:layout_height="170dp"
                 android:layout_marginStart="8dp"
@@ -222,7 +222,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.439"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/graph"
+                app:layout_constraintTop_toBottomOf="@+id/graphX"
                 app:layout_constraintVertical_bias="0.3" />
 
             <com.jjoe64.graphview.GraphView
