@@ -33,12 +33,14 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private static final int EXTERNAL_STORAGE_CODE = 100;
-    public static int HR_ARR_LEN = 500;
+    public static int HR_ARR_LEN = 10;
     public static int MAX_HR = 50;
-    public static int SAMPLE_GENERATE_RATE = 350;
+    public static int SAMPLE_GENERATE_RATE = 1000000;
     final String dbFilePath = "/sdcard/Android/data/com.example.a5/files/";
     final String dbFileName = "lalwani.sqlite";
-    final String serverURL = "http://192.168.0.37/UploadToServer.php";
+    final String serverIP = "10.157.97.85";
+    final String serverURL = "http://"+serverIP + "/UploadToServer.php";
+    final String serverDownladURL = "http://"+serverIP + "/uploads/";
 
     private boolean isRunning = false;
     private float[] hrValues;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float accelValuesX[] = new float[HR_ARR_LEN];
     float accelValuesY[] = new float[HR_ARR_LEN];
     float accelValuesZ[] = new float[HR_ARR_LEN];
+    long timestamps[] = new long[HR_ARR_LEN];
     int index = 0;
     int k=0;
 
@@ -107,23 +110,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         dbDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadPatient(v);
-//                doDownload();
-
-                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
-                    if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-                        //permission is denied, request it.
-                        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                        requestPermissions(permissions, EXTERNAL_STORAGE_CODE);
-                    }
-                    else {
-                        //permission granted
-                        doDownload();
-                    }
+                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                    //permission is denied, request it.
+                    String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, EXTERNAL_STORAGE_CODE);
                 }
-                else{
+                else {
+                    //permission granted
                     doDownload();
                 }
+            }
+            else{
+                doDownload();
+            }
+            loadPatient();
             }
         });
 
@@ -171,19 +172,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void doDownload() {
-        String url = "https://images.all-free-download.com/images/graphiclarge/hd_picture_of_the_beautiful_natural_scenery_03_166249.jpg";
-
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+//        String url = "https://images.all-free-download.com/images/graphiclarge/hd_picture_of_the_beautiful_natural_scenery_03_166249.jpg";
+        String url = serverDownladURL + dbFileName;
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE |
                 DownloadManager.Request.NETWORK_WIFI);
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "image.png");
+        //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "image.png");
+        request.setDestinationInExternalPublicDir(dbFilePath, dbFileName);
 
         DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
-
-
     }
 
     public void startGraph(View view) {
@@ -205,15 +205,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         currPatient = new Patient(name, id, age, sex, getExternalFilesDir(null).getAbsolutePath());
         //isRunning = true;
         
-        accelManage.registerListener(MainActivity.this, senseAccel, accelManage.SENSOR_DELAY_NORMAL);
+        accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SAMPLE_GENERATE_RATE);
 
     }
 
     public void stopGraph(View view) {
-        int timestamps[] = new int[hrCurrIdx];
-        for(int i=0; i< hrCurrIdx; i++)
-            timestamps[i] = i;
-        currPatient.addSamples(timestamps, hrValues, hrValues, hrValues);
+        currPatient.addSamples(timestamps, accelValuesX, accelValuesY, accelValuesZ);
 
         isRunning = false;
         hrCurrIdx = 0;
@@ -221,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphX.removeAllSeries();
         graphY.removeAllSeries();
         graphZ.removeAllSeries();
+
+        accelManage.unregisterListener(this);
     }
 
     private void uploadDB(View view){
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }).start();
     }
 
-    public void loadPatient(View view) {
+    public void loadPatient() {
         if(nameEditText.getText().length() == 0 ||
                 ageEditText.getText().length() == 0 ||
                 idEditText.getText().length() == 0
@@ -322,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // If the array is full, shift the x-axis start offset
             if(index >= HR_ARR_LEN)
                 offset++;
+
             // Update the X axis range
             graphX.getViewport().setMinX(offset);
             graphX.getViewport().setMaxX(offset + HR_ARR_LEN);
@@ -343,6 +343,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent sensorEvent) {
         // TODO Auto-generated method stub
         Sensor mySensor = sensorEvent.sensor;
+        long currTimestampsys = System.currentTimeMillis()/1000;
+        long currTimestamp = sensorEvent.timestamp;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             if(index < HR_ARR_LEN-1) {
@@ -350,16 +352,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 accelValuesX[index] = sensorEvent.values[0];
                 accelValuesY[index] = sensorEvent.values[1];
                 accelValuesZ[index] = sensorEvent.values[2];
+                timestamps[index] = currTimestamp;
             }
             else{
                 for (int i = 0; i < HR_ARR_LEN - 1; i++){
                     accelValuesX[i] = accelValuesX[i+1];
                     accelValuesY[i] = accelValuesY[i+1];
                     accelValuesZ[i] = accelValuesZ[i+1];
+                    timestamps[i] = timestamps[i+1];
                 }
                 accelValuesX[index-1] = sensorEvent.values[0];
                 accelValuesY[index-1] = sensorEvent.values[1];
                 accelValuesZ[index-1] = sensorEvent.values[2];
+                timestamps[index-1] = currTimestamp;
             }
         }
 

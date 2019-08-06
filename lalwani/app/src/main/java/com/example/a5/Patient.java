@@ -40,12 +40,12 @@ public class Patient {
         mDB.close();
     }
 
-    public boolean addSamples(int timestamps[], float x[], float y[], float z[]) {
+    public boolean addSamples(long timestamps[], float x[], float y[], float z[]) {
         boolean ret = false;
         mDB.beginTransaction();
         try {
             mDB.execSQL("create table "+ mTableName +" ("
-                    + " timestamp int, "
+                    + " timestamp real, "
                     + " x real, "
                     + " y real, "
                     + " z real); ");
@@ -83,7 +83,7 @@ public class Patient {
 
             for(int i=0 ;i< cursor.getCount(); i++) {
                 patientData[i] = new PatientData();
-                patientData[i].timestamp = cursor.getInt(0);
+                patientData[i].timestamp = cursor.getLong(0);
                 patientData[i].x = cursor.getFloat(1);
                 patientData[i].y = cursor.getFloat(2);
                 patientData[i].z = cursor.getFloat(3);
@@ -100,7 +100,7 @@ public class Patient {
     }
 
     public class PatientData{
-        public int timestamp;
+        public long timestamp;
         public float x;
         public float y;
         public float z;
