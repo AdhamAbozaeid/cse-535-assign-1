@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     final String serverDownladURL = "http://"+serverIP + "/uploads/";
 
     private boolean isRunning = false;
-    private float[] hrValues;
-    private int hrCurrIdx = 0;
     GraphView graphX;
     GraphView graphY;
     GraphView graphZ;
@@ -73,8 +71,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setSupportActionBar(toolbar);
 
         dbFilePath = getExternalFilesDir(null).getAbsolutePath();
-        hrValues = new float[HR_ARR_LEN];
-        hrCurrIdx = 0;
 
         idEditText = (EditText) findViewById(R.id.idTxtView);
         ageEditText = (EditText) findViewById(R.id.ageTxtView);
@@ -282,43 +278,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphY.addSeries(seriesTempY);
         graphZ.addSeries(seriesTempZ);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Thread background = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    while(true) {
-                        if(isRunning) {
-                            float newHR;
-                            Thread.sleep(SAMPLE_GENERATE_RATE);
-                            // Generate new sample
-                            Random rnd = new Random();
-
-                            // Add new sample to hrValues array
-                            newHR = (float) rnd.nextInt(MAX_HR);
-                            if (hrCurrIdx < HR_ARR_LEN)
-                                hrValues[hrCurrIdx++] = newHR;
-                            else {
-                                // Array is full. Shift it
-                                for (int i = 0; i < HR_ARR_LEN - 1; i++)
-                                    hrValues[i] = hrValues[i + 1];
-                                hrValues[HR_ARR_LEN - 1] = newHR;
-                            }
-
-                            // Send message to the UI activity
-                            Message msg = handler.obtainMessage(1, null);
-                            handler.sendMessage(msg);
-                        }
-                    }
-                } catch (Throwable t) {
-                }
-            }//run
-        });//background
-        //isRunning = true;
-        background.start();
-    }//onStart
 
     @Override
     public void onStop() {
