@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static int HR_ARR_LEN = 10;
     public static int MAX_HR = 50;
     public static int SAMPLE_GENERATE_RATE = 1000000;
+
     String dbFilePath ;
     final String dbFileName = "lalwani.sqlite";
     final String serverIP = "10.157.97.85";
@@ -255,7 +256,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String sex = ((RadioButton)findViewById(sexRdoGrp.getCheckedRadioButtonId()))
                 .getText().toString();
         currPatient = new Patient(name, id, age, sex, getExternalFilesDir(null).getAbsolutePath());
+
+        //Show the patient Data from DB on Graph.
+        // Clear the graph, first...
+        graphX.removeAllSeries();
+        graphY.removeAllSeries();
+        graphZ.removeAllSeries();
+
         Patient.PatientData patientData[] = currPatient.loadPatientData();
+        int patientDataLength = patientData.length;
+        DataPoint[] dataPointsX = new DataPoint[patientDataLength];
+        DataPoint[] dataPointsY = new DataPoint[patientDataLength];
+        DataPoint[] dataPointsZ = new DataPoint[patientDataLength];
+
+        for (int i = 0; i < patientDataLength; i++) {
+            dataPointsX[i] = new DataPoint(i,patientData[i].x);
+            dataPointsY[i] = new DataPoint(i,patientData[i].y);
+            dataPointsZ[i] = new DataPoint(i,patientData[i].z);
+        }
+        LineGraphSeries<DataPoint> seriesTempX = new LineGraphSeries<DataPoint>(dataPointsX);
+        LineGraphSeries<DataPoint> seriesTempY = new LineGraphSeries<DataPoint>(dataPointsY);
+        LineGraphSeries<DataPoint> seriesTempZ = new LineGraphSeries<DataPoint>(dataPointsZ);
+
+        graphX.addSeries(seriesTempX);
+        graphY.addSeries(seriesTempY);
+        graphZ.addSeries(seriesTempZ);
     }
 
     @Override
