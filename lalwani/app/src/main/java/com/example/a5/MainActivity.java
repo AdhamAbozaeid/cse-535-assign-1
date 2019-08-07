@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static int HR_ARR_LEN = 10;
     public static int MAX_HR = 50;
     public static int SAMPLE_GENERATE_RATE = 1000000;
+    long lastSampleTime = 0;
 
     String dbFilePath ;
     final String dbFileName = "lalwani.sqlite";
@@ -204,24 +204,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String sex = ((RadioButton)findViewById(sexRdoGrp.getCheckedRadioButtonId()))
                         .getText().toString();
 
-        currPatient = new Patient(name, id, age, sex, getExternalFilesDir(null).getAbsolutePath());
+        currPatient = new Patient(name, id, age, sex, dbFilePath);
         //isRunning = true;
         
-        accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SAMPLE_GENERATE_RATE);
+        accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 
     public void stopGraph(View view) {
+        accelManage.unregisterListener(this);
         currPatient.addSamples(timestamps, accelValuesX, accelValuesY, accelValuesZ);
 
         isRunning = false;
-        hrCurrIdx = 0;
+        index = 0;
         offset = 0;
+
         graphX.removeAllSeries();
         graphY.removeAllSeries();
         graphZ.removeAllSeries();
-
-        accelManage.unregisterListener(this);
     }
 
     private void uploadDB(View view){
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int id = Integer.parseInt(idEditText.getText().toString());
         String sex = ((RadioButton)findViewById(sexRdoGrp.getCheckedRadioButtonId()))
                 .getText().toString();
-        currPatient = new Patient(name, id, age, sex, getExternalFilesDir(null).getAbsolutePath());
+        currPatient = new Patient(name, id, age, sex, dbFilePath);
 
         //Show the patient Data from DB on Graph.
         // Clear the graph, first...
@@ -369,8 +369,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent sensorEvent) {
         // TODO Auto-generated method stub
         Sensor mySensor = sensorEvent.sensor;
-        long currTimestampsys = System.currentTimeMillis()/1000;
+        long currTimestampsys = System.currentTimeMillis();
         long currTimestamp = sensorEvent.timestamp;
+
+        if (currTimestampsys - lastSampleTime < 1000)
+            return;
+
+        lastSampleTime = currTimestampsys;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             if(index < HR_ARR_LEN) {
