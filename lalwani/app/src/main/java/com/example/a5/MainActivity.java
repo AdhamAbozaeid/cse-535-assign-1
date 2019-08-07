@@ -303,9 +303,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 seriesY.appendData(new DataPoint(i + offset, accelValuesY[i]), true, HR_ARR_LEN);
                 seriesZ.appendData(new DataPoint(i + offset, accelValuesZ[i]), true, HR_ARR_LEN);
             }
-            // If the array is full, shift the x-axis start offset
-            if(index >= HR_ARR_LEN)
-                offset++;
 
             // Update the X axis range
             graphX.getViewport().setMinX(offset);
@@ -322,6 +319,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             graphZ.getViewport().setMaxX(offset + HR_ARR_LEN);
             // Add the new series to the graph
             graphZ.addSeries(seriesZ);
+
+            // If the array is full, shift the x-axis start offset
+            if(index >= HR_ARR_LEN)
+                offset++;
         }
     }; //handler
     
