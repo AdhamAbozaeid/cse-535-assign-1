@@ -30,7 +30,7 @@ public class Patient {
         mTableName = mName+"_"+mID+"_"+mAge+"_"+mSex;
 
         try {
-            mDB = SQLiteDatabase.openOrCreateDatabase(dbPath + "/lalwani.sqlite", null);
+            mDB = SQLiteDatabase.openOrCreateDatabase(dbPath + "lalwani.sqlite", null);
         } catch (SQLException e) {
             Log.e("DB", e.getMessage());
         }
@@ -74,9 +74,15 @@ public class Patient {
         mDB.beginTransaction();
         PatientData patientData[] = null;
 
-        SQLiteStatement statement = mDB.compileStatement("select * from "+ mTableName);
         Cursor cursor;
-        cursor = mDB.rawQuery("select * from " + mTableName, null);
+        try {
+            SQLiteStatement statement = mDB.compileStatement("select * from " + mTableName);
+
+            cursor = mDB.rawQuery("select * from " + mTableName, null);
+        }catch (Exception e) {
+            Log.e("DB", e.getMessage());
+            return null;
+        }
 
         try {
             cursor.moveToFirst();

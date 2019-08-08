@@ -11,6 +11,7 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static int SAMPLE_GENERATE_RATE = 1000000;
     long lastSampleTime = 0;
 
-    String dbFilePath ;
+    String dbFilePath;
     final String dbFileName = "lalwani.sqlite";
     final String serverIP = "10.157.97.85";
     final String serverURL = "http://"+serverIP + "/UploadToServer.php";
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        dbFilePath = getExternalFilesDir(null).getAbsolutePath();
+        dbFilePath = getExternalFilesDir(null).getAbsolutePath()+"/";
 
         idEditText = (EditText) findViewById(R.id.idTxtView);
         ageEditText = (EditText) findViewById(R.id.ageTxtView);
@@ -175,10 +176,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE |
                 DownloadManager.Request.NETWORK_WIFI);
-        request.allowScanningByMediaScanner();
+        request.allowScanningByMediaScanner()   ;
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "image.png");
-        request.setDestinationInExternalPublicDir(dbFilePath, dbFileName);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, dbFileName);
+        //request.setDestinationInExternalPublicDir(dbFilePath, dbFileName);
 
         DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
@@ -251,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int id = Integer.parseInt(idEditText.getText().toString());
         String sex = ((RadioButton)findViewById(sexRdoGrp.getCheckedRadioButtonId()))
                 .getText().toString();
-        currPatient = new Patient(name, id, age, sex, dbFilePath);
+        currPatient = new Patient(name, id, age, sex, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/");
 
         //Show the patient Data from DB on Graph.
         // Clear the graph, first...
