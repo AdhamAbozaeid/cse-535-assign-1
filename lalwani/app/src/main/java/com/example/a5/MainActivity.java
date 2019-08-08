@@ -29,6 +29,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.File;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     String dbFilePath;
     final String dbFileName = "lalwani.sqlite";
-    final String serverIP = "10.157.97.85";
+    final String serverIP = "192.168.43.35";
     final String serverURL = "http://"+serverIP + "/UploadToServer.php";
     final String serverDownladURL = "http://"+serverIP + "/uploads/";
 
@@ -171,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void doDownload() {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+dbFileName);
+        boolean deleted = file.delete();
+
 //        String url = "https://images.all-free-download.com/images/graphiclarge/hd_picture_of_the_beautiful_natural_scenery_03_166249.jpg";
         String url = serverDownladURL + dbFileName;
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -179,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         request.allowScanningByMediaScanner()   ;
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, dbFileName);
+
         //request.setDestinationInExternalPublicDir(dbFilePath, dbFileName);
 
         DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
