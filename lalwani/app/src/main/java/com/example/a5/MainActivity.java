@@ -35,7 +35,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private static final int EXTERNAL_STORAGE_CODE = 100;
     public static int HR_ARR_LEN = 10;
-    public static int MAX_HR = 50;
+    public static int MAX_HR = 20;
     public static int SAMPLE_GENERATE_RATE = 1000000;
     long lastSampleTime = 0;
 
@@ -188,6 +188,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startGraph(View view) {
